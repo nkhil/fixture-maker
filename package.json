@@ -1,6 +1,6 @@
 {
   "name": "fixture-maker",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A package that generates fixture files programatically",
   "main": "index.js",
   "scripts": {
