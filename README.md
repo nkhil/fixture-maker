@@ -1,7 +1,7 @@
 # Fixture Maker
 
 [![bot.png](https://i.postimg.cc/m23K4FVL/bot.png)](https://postimg.cc/4mdWbyrq)
-<a href="https://www.freepik.com/free-photos-vectors/technology">Source</a>
+[Source](https://www.freepik.com/free-photos-vectors/technology)
 
 ## Installation
 
