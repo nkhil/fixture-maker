@@ -1,0 +1,20 @@
+{
+  "name": "fixture-maker",
+  "version": "1.0.0",
+  "description": "A package that generates fixture files programatically",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "keywords": [
+    "fixture",
+    "maker",
+    "json",
+    "fixture"
+  ],
+  "author": "Nikhil Vijayan",
+  "license": "MIT",
+  "dependencies": {
+    "uuid": "^3.3.3"
+  }
+}
