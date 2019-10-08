@@ -91,3 +91,5 @@ class FixtureMaker {
     return this.populator;
   }
 }
+
+module.exports = FixtureMaker;
