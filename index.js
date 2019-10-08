@@ -1,7 +1,6 @@
 const uuid = require('uuid/v4');
 
 class Populator {
-  
   constructor() {
     this.verificationKey = uuid();
   }
@@ -11,56 +10,84 @@ class Populator {
   }
 
   string({ chars }) {
-    return [this.verificationKey, 'STRING', chars];
+    return [this.verificationKey, 'STRING', [chars]];
   }
 
-  randomNumber(num1 = 0, num2 = 1) {
-    return [this.verificationKey, 'NUMBER', [num1, num2] ];
+  randomNumber({ from, to }) {
+    return [this.verificationKey, 'NUMBER', [from, to]];
   }
 
-  randomDate(dateOne, dateTwo) {
-    return [this.verificationKey, 'DATE', [dateOne, dateTwo]];
+  randomDate({ between, and }) {
+    return [this.verificationKey, 'DATE', [between, and]];
   }
 
-  verification() {
+  getVerificationKey() {
     return this.verificationKey;
   }
 }
 
 class FixtureMaker {
-  
   constructor(populate) {
-    this.populator = new Populator();
+    this.populator = populate || new Populator();
   }
 
   make({ shape }) {
     const result = {};
-    Object.keys(shape).map(x => {
-      const valueIsArray = Array.isArray(shape[x]);
-      if (valueIsArray) {
-        if(shape[x][0] === this.verificationCode() ) { 
-          console.log(x); 
-          console.log('BOOM!'); 
-        }
+    Object.keys(shape).map(key => {
+      const valueIsArray = Array.isArray(shape[key]);
+      const valueVerifiedAsFixtureRequest =
+        shape[key][0] === this.verificationCode();
+      if (valueIsArray && valueVerifiedAsFixtureRequest) {
+        result[key] = this.processRequest(shape[key]);
+      } else {
+        result[key] = shape[key];
       }
     });
+    return result;
+  }
+
+  processRequest(requestArray) {
+    const type = requestArray[1];
+    const args = requestArray[2];
+    let result;
+    switch (type) {
+      case 'STRING':
+        result = this.__handleString(args);
+        break;
+      case 'UUID':
+        result = this.handleUUID();
+        break;
+      case 'NUMBER':
+        result = this.handleNumber(args);
+        break;
+      case 'DATE':
+        result = this.handleDate(args);
+        break;
+      default:
+        throw new Error(`Error: Unknown or unsupported type: ${type}`);
+    }
+    return result;
+  }
+
+  // eslint-disable-next-line class-methods-use-this
+  __handleString(array) {
+    const length = array[0];
+    let result = '';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    const charactersLength = characters.length;
+    // eslint-disable-next-line no-plusplus
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
   verificationCode() {
-    return this.populator.verification();
+    return this.populator.getVerificationKey();
   }
 
   populate() {
     return this.populator;
   }
-  
 }
-
-const fixtureMaker = new FixtureMaker();
-const a = fixtureMaker.populate().uuid();
-const b = fixtureMaker.populate().string({ chars: 23 });
-const c = fixtureMaker.populate().randomNumber(10, 100);
-
-// Testing...
-const stub = { one: 'hello', two: fixtureMaker.populate().uuid() };
-fixtureMaker.make({ shape: stub });
