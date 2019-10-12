@@ -1,6 +1,8 @@
+/* eslint-disable class-methods-use-this */
 const uuid = require('uuid/v4');
+const fs = require('fs');
 
-class Populator {
+class FixtureMaker {
   constructor() {
     this.verificationKey = uuid();
   }
@@ -13,8 +15,8 @@ class Populator {
     return [this.verificationKey, 'STRING', [chars]];
   }
 
-  randomNumber({ from, to }) {
-    return [this.verificationKey, 'NUMBER', [from, to]];
+  randomNumber({ between, and }) {
+    return [this.verificationKey, 'RANDOM_NUMBER', [between, and]];
   }
 
   randomDate({ between, and }) {
@@ -24,23 +26,26 @@ class Populator {
   getVerificationKey() {
     return this.verificationKey;
   }
-}
 
-class FixtureMaker {
-  constructor(populate) {
-    this.populator = populate || new Populator();
+  make({ body, numberOfCopies, filename }) {
+    const result = [];
+    for (let index = 0; index < numberOfCopies; index++) {
+      const resultObject = this.createObject(body);
+      result.push(resultObject);
+    }
+    fs.writeFileSync(`./${filename}.json`, JSON.stringify(result, null, '\t'));
   }
 
-  make({ shape }) {
+  createObject(body) {
     const result = {};
-    Object.keys(shape).map(key => {
-      const valueIsArray = Array.isArray(shape[key]);
+    Object.keys(body).map(key => {
+      const valueIsArray = Array.isArray(body[key]);
       const valueVerifiedAsFixtureRequest =
-        shape[key][0] === this.verificationCode();
+        body[key][0] === this.getVerificationKey();
       if (valueIsArray && valueVerifiedAsFixtureRequest) {
-        result[key] = this.processRequest(shape[key]);
+        result[key] = this.processRequest(body[key]);
       } else {
-        result[key] = shape[key];
+        result[key] = body[key];
       }
     });
     return result;
@@ -55,13 +60,13 @@ class FixtureMaker {
         result = this.__handleString(args);
         break;
       case 'UUID':
-        result = this.handleUUID();
+        result = this.__handleUUID();
         break;
-      case 'NUMBER':
-        result = this.handleNumber(args);
+      case 'RANDOM_NUMBER':
+        result = this.__handleNumber(args);
         break;
       case 'DATE':
-        result = this.handleDate(args);
+        result = this.__handleDate(args);
         break;
       default:
         throw new Error(`Error: Unknown or unsupported type: ${type}`);
@@ -69,7 +74,6 @@ class FixtureMaker {
     return result;
   }
 
-  // eslint-disable-next-line class-methods-use-this
   __handleString(array) {
     const length = array[0];
     let result = '';
@@ -83,12 +87,34 @@ class FixtureMaker {
     return result;
   }
 
-  verificationCode() {
-    return this.populator.getVerificationKey();
+  __handleUUID() {
+    return uuid();
   }
 
-  populate() {
-    return this.populator;
+  __handleNumber(argumentArray) {
+    const [between, and] = argumentArray;
+    return Math.floor(Math.random() * (and - between + 1) + between);
+  }
+
+  __handleDate(argumentArray) {
+    const [between, and] = argumentArray;
+    function getRandomArbitrary(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+    let date1 = between;
+    let date2 = and;
+    date1 = new Date(date1).getTime();
+    date2 = new Date(date2).getTime();
+    if (date1 > date2) {
+      const result = new Date(
+        getRandomArbitrary(date2, date1)
+      ).toLocaleDateString();
+      return new Date(result).toISOString();
+    }
+    const result = new Date(
+      getRandomArbitrary(date1, date2)
+    ).toLocaleDateString();
+    return new Date(result).toISOString();
   }
 }
 
