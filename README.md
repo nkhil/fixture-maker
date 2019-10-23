@@ -1,8 +1,6 @@
 # Fixture Maker
 
-[![bot.png](https://i.postimg.cc/m23K4FVL/bot.png)](https://postimg.cc/4mdWbyrq)
-
-[Source](https://www.freepik.com/free-photos-vectors/technology)
+[![bot2.png](https://i.postimg.cc/L8sBwN16/bot2.png)](https://postimg.cc/HVfy70zf)
 
 FixtureMaker is a simple package made to help you create fixture files (for testing, creating sample data etc). Currently, the fixtures are only made in `json` format.
 
