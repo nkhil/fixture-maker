@@ -38,7 +38,7 @@ fixtureMaker.make({
 });
 ```
 
-**Note:** Currently, `fixture-maker` only supports objects without any nested objects in.
+**Note:** Currently, `fixture-maker` only supports objects with one level of nested objects.
 
 ## Sample of fixture file generated
 
