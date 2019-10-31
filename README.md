@@ -4,7 +4,8 @@
 
 FixtureMaker is a simple package made to help you create fixture files (for testing, creating sample data etc). Currently, the fixtures are only made in `json` format.
 
-FixtureMaker is made using vanilla JavaScript.
+[![forthebadge](https://forthebadge.com/images/badges/made-with-javascript.svg)](https://forthebadge.com)
+[![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)](https://forthebadge.com)
 
 ## Installation
 
