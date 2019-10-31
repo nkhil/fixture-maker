@@ -37,7 +37,7 @@ fixtureMaker.make({
 });
 ```
 
-**Note:** Currently, `fixture-maker` only supports objects without any nested objects in. 
+**Note:** Currently, `fixture-maker` only supports objects without any nested objects in.
 
 ## Sample of fixture file generated
 
@@ -75,6 +75,100 @@ fixtureMaker.make({
     "date": "2000-05-24T23:00:00.000Z"
   }
 ]
+```
+
+## Nested Objects
+
+### Usage
+
+```javascript
+const FixtureMaker = require("fixture-maker");
+
+const fixtureMaker = new FixtureMaker();
+
+const fixtureBody = {
+  firstName: fixtureMaker.string({ chars: 10 }),
+  lastname: "Jones",
+  information: {
+    licenseNumber: fixtureMaker.uuid(),
+    phoneNumber: fixtureMaker.randomNumber({ between: 1000, and: 2000 }),
+    cool: true,
+    boo: false,
+    dateOfBirth: fixtureMaker.randomDate({
+      between: "01-01-2018",
+      and: "12-31-2019"
+    })
+  }
+};
+
+fixtureMaker.make({
+  body: fixtureBody,
+  numberOfCopies: 5,
+  filename: "helloworld"
+});
+```
+
+```json
+// helloworld.json
+
+
+	{
+		"firstName": "lClqiZ76D0",
+		"lastname": "Jones",
+		"information": {
+			"licenseNumber": "40a8cfb5-64bb-4d69-a9fc-76757ea20fdd",
+			"phoneNumber": 1777,
+			"cool": true,
+			"boo": false,
+			"dateOfBirth": "2018-09-01T23:00:00.000Z"
+		}
+	},
+	{
+		"firstName": "8vp1USXpKz",
+		"lastname": "Jones",
+		"information": {
+			"licenseNumber": "c73975c4-c83a-4355-b573-64fd7599b39c",
+			"phoneNumber": 1884,
+			"cool": true,
+			"boo": false,
+			"dateOfBirth": "2019-11-28T00:00:00.000Z"
+		}
+	},
+	{
+		"firstName": "SON0qdCgqH",
+		"lastname": "Jones",
+		"information": {
+			"licenseNumber": "c160ee59-095e-42ca-947e-f01bc0c8d77a",
+			"phoneNumber": 1004,
+			"cool": true,
+			"boo": false,
+			"dateOfBirth": "2019-04-24T23:00:00.000Z"
+		}
+	},
+	{
+		"firstName": "0t84UmDAgA",
+		"lastname": "Jones",
+		"information": {
+			"licenseNumber": "dd159301-9906-4df3-aaa1-e2af3e50f13e",
+			"phoneNumber": 1054,
+			"cool": true,
+			"boo": false,
+			"dateOfBirth": "2018-04-02T23:00:00.000Z"
+		}
+	},
+	{
+		"firstName": "zxd9AkBN9j",
+		"lastname": "Jones",
+		"information": {
+			"licenseNumber": "a00f7bd0-d53a-4e10-8747-796a34f986d2",
+			"phoneNumber": 1451,
+			"cool": true,
+			"boo": false,
+			"dateOfBirth": "2018-07-07T23:00:00.000Z"
+		}
+	}
+]
+
 ```
 
 ## Contribute
