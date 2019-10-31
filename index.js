@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow */
 /* eslint-disable class-methods-use-this */
 const uuid = require('uuid/v4');
 const fs = require('fs');
@@ -30,26 +31,95 @@ class FixtureMaker {
   make({ body, numberOfCopies, filename }) {
     const result = [];
     for (let index = 0; index < numberOfCopies; index++) {
-      const resultObject = this.createObject(body);
+      const resultObject = this.handleCreateObject(body);
       result.push(resultObject);
     }
     fs.writeFileSync(`./${filename}.json`, JSON.stringify(result, null, '\t'));
   }
 
-  createObject(body) {
+  isObject(item) {
+    return typeof item === 'object' && !Array.isArray(item) && item !== null;
+  }
+
+  handleCreateObject(body) {
+    const transformed = {};
     const result = {};
-    Object.keys(body).map(key => {
-      const valueIsArray = Array.isArray(body[key]);
-      const valueVerifiedAsFixtureRequest =
-        body[key][0] === this.getVerificationKey();
-      if (valueIsArray && valueVerifiedAsFixtureRequest) {
-        result[key] = this.processRequest(body[key]);
-      } else {
-        result[key] = body[key];
-      }
+    Object.keys(body).forEach(key => {
+      transformed[key] = this.createResult(body[key]);
+    });
+    const entries = Object.entries(transformed);
+    entries.forEach(entry => {
+      const key = entry[0];
+      result[key] = this.transform(entry[1]);
     });
     return result;
   }
+
+  transform(value) {
+    if (this.isArray(value)) {
+      const a = this.processRequest(value);
+      return a;
+    }
+    if (this.isObject(value)) {
+      const result = {};
+      Object.keys(value).forEach(key => {
+        if (this.isArray(value[key])) {
+          result[key] = this.processRequest(value[key]);
+        } else {
+          result[key] = value[key];
+        }
+      });
+      return result;
+    }
+    return value;
+  }
+
+  isArray(value) {
+    return Array.isArray(value);
+  }
+
+  isVerifiedAsFixtureRequest(value) {
+    return value === this.getVerificationKey();
+  }
+
+  createResult(value) {
+    if (this.isObject(value)) {
+      return this.createResultObject(value);
+    }
+    if (this.isArray(value) && this.isVerifiedAsFixtureRequest(value)) {
+      return this.createArrayObject(value);
+    }
+    return value;
+  }
+
+  createResultObject(obj) {
+    return obj;
+  }
+
+  createArrayObject(arr) {
+    return this.processRequest(arr);
+  }
+
+  // createObject(body) {
+  //   const result = {};
+  //   Object.keys(body).map(key => {
+  //     const valueIsArray = Array.isArray(body[key]);
+  //     const valueVerifiedAsFixtureRequest =
+  //       body[key][0] === this.getVerificationKey();
+  //     if (this.isObject(body[key])) {
+  //       const a = this.createObject(body[key]);
+  //       Object.defineProperty(result, key, {
+  //         value: a,
+  //         writable: false,
+  //       });
+  //     } else if (valueIsArray && valueVerifiedAsFixtureRequest) {
+  //       result[key] = this.processRequest(body[key]);
+  //     } else {
+  //       result[key] = body[key];
+  //     }
+  //   });
+  //   return result;
+  // }
 
   processRequest(requestArray) {
     const type = requestArray[1];
@@ -80,7 +150,6 @@ class FixtureMaker {
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     const charactersLength = characters.length;
-    // eslint-disable-next-line no-plusplus
     for (let i = 0; i < length; i++) {
       result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
@@ -93,7 +162,7 @@ class FixtureMaker {
 
   __handleNumber(argumentArray) {
     const [between, and] = argumentArray;
-    return Math.floor(Math.random() * (and - between + 1) + between);
+    return Math.floor(Math.random() * (and - between) + between);
   }
 
   __handleDate(argumentArray) {
@@ -106,14 +175,10 @@ class FixtureMaker {
     date1 = new Date(date1).getTime();
     date2 = new Date(date2).getTime();
     if (date1 > date2) {
-      const result = new Date(
-        getRandomArbitrary(date2, date1)
-      ).toLocaleDateString();
+      const result = new Date(getRandomArbitrary(date2, date1)).toLocaleDateString();
       return new Date(result).toISOString();
     }
-    const result = new Date(
-      getRandomArbitrary(date1, date2)
-    ).toLocaleDateString();
+    const result = new Date(getRandomArbitrary(date1, date2)).toLocaleDateString();
     return new Date(result).toISOString();
   }
 }
