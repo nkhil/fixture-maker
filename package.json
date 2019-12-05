@@ -1,6 +1,6 @@
 {
   "name": "fixture-maker",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A package that generates fixture files programatically",
   "main": "index.js",
   "scripts": {
@@ -19,11 +19,11 @@
   "author": "Nikhil Vijayan",
   "license": "MIT",
   "dependencies": {
-    "uuid": "^3.3.3"
+    "uuid": "3.3.3"
   },
   "devDependencies": {
-    "chai": "^4.2.0",
-    "chai-uuid": "^1.0.6",
-    "mocha": "^6.2.1"
+    "chai": "4.2.0",
+    "chai-uuid": "1.0.6",
+    "mocha": "6.2.1"
   }
 }
