@@ -55,6 +55,16 @@ class FixtureMaker {
     return result;
   }
 
+  createResult(value) {
+    if (this.isObject(value)) {
+      return this.createResultObject(value);
+    }
+    if (this.isArray(value) && this.isVerifiedAsFixtureRequest(value)) {
+      return this.createArrayObject(value);
+    }
+    return value;
+  }
+
   transform(value) {
     if (this.isArray(value)) {
       const a = this.processRequest(value);
@@ -82,16 +92,6 @@ class FixtureMaker {
     return value === this.getVerificationKey();
   }
 
-  createResult(value) {
-    if (this.isObject(value)) {
-      return this.createResultObject(value);
-    }
-    if (this.isArray(value) && this.isVerifiedAsFixtureRequest(value)) {
-      return this.createArrayObject(value);
-    }
-    return value;
-  }
-
   createResultObject(obj) {
     return obj;
   }
@@ -99,27 +99,6 @@ class FixtureMaker {
   createArrayObject(arr) {
     return this.processRequest(arr);
   }
-
-  // createObject(body) {
-  //   const result = {};
-  //   Object.keys(body).map(key => {
-  //     const valueIsArray = Array.isArray(body[key]);
-  //     const valueVerifiedAsFixtureRequest =
-  //       body[key][0] === this.getVerificationKey();
-  //     if (this.isObject(body[key])) {
-  //       const a = this.createObject(body[key]);
-  //       Object.defineProperty(result, key, {
-  //         value: a,
-  //         writable: false,
-  //       });
-  //     } else if (valueIsArray && valueVerifiedAsFixtureRequest) {
-  //       result[key] = this.processRequest(body[key]);
-  //     } else {
-  //       result[key] = body[key];
-  //     }
-  //   });
-  //   return result;
-  // }
 
   processRequest(requestArray) {
     const type = requestArray[1];
